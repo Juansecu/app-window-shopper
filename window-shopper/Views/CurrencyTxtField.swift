@@ -11,7 +11,7 @@ import UIKit
 @IBDesignable
 class CurrencyTxtField: UITextField {
     override func draw(_ rect: CGRect) {
-        let size: CGFloat = 20
+        let size: CGFloat = 30
         let currencyLbl = UILabel(frame: CGRect(x: 5, y: (frame.size.height / 2) - size / 2, width: size, height: size))
         currencyLbl.backgroundColor = #colorLiteral(red: 0.8772644591, green: 0.8772644591, blue: 0.8772644591, alpha: 0.8)
         currencyLbl.textAlignment = .center
@@ -21,7 +21,7 @@ class CurrencyTxtField: UITextField {
         let formatter = NumberFormatter()
         formatter.numberStyle = .currency
         formatter.locale = .current
-        currencyLbl.text = formatter.currencySymbol
+        currencyLbl.text = getSymbol(forCurrencyCode: Locale.current.regionCode ?? "USD")//formatter.currencySymbol + "$"
         addSubview(currencyLbl)
     }
     
@@ -46,5 +46,14 @@ class CurrencyTxtField: UITextField {
             attributedPlaceholder = place
             textColor = #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
         }
+    }
+    
+    func getSymbol(forCurrencyCode code: String) -> String? {
+        let locale = NSLocale(localeIdentifier: code)
+        if locale.displayName(forKey: .currencySymbol, value: code) == code {
+            let newlocale = NSLocale(localeIdentifier: code.dropLast() + "_en")
+            return newlocale.displayName(forKey: .currencySymbol, value: code)
+        }
+        return locale.displayName(forKey: .currencySymbol, value: code)
     }
 }
